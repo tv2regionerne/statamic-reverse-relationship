@@ -1,0 +1,19 @@
+{
+    "name": "tv2regionerne/statamic-reverse-relationship",
+    "autoload": {
+        "psr-4": {
+            "Tv2regionerne\\StatamicReverseRelationship\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic Reverse Relationship",
+            "description": "Statamic Reverse Relationship addon"
+        },
+        "laravel": {
+            "providers": [
+                "Tv2regionerne\\StatamicReverseRelationship\\ServiceProvider"
+            ]
+        }
+    }
+}
