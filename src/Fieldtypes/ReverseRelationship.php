@@ -2,9 +2,9 @@
 
 namespace Tv2regionerne\StatamicReverseRelationship\Fieldtypes;
 
-use Statamic\Fields\Fieldtype;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Term;
+use Statamic\Fields\Fieldtype;
 
 class ReverseRelationship extends Fieldtype
 {
@@ -69,23 +69,37 @@ class ReverseRelationship extends Fieldtype
         return $this->getItems($id);
     }
 
+    public function preProcessIndex($data)
+    {
+        $id = $this->field->parent()->id();
+
+        return $this->getCount($id);
+    }
+
     public function getItems($id)
+    {
+        return $this->getQuery($id)->get();
+    }
+
+    public function getCount($id)
+    {
+        return $this->getQuery($id)->count();
+    }
+
+    protected function getQuery($id)
     {
         $mode = $this->config('mode');
 
-        // ensure the ID does not contain the field prefix
-        $id = str($id)->after('::')->value();
-
         if ($mode === 'entries') {
             $query = Entry::query()->where('collection', $this->config('collection'));
-        } else if ($mode === 'terms') {
+        } elseif ($mode === 'terms') {
+            // Remove the taxonomy handle from the ID
+            $id = str($id)->after('::')->value();
             $query = Term::query()->where('taxonomy', $this->config('taxonomy'));
         }
 
-        $query
+        return $query
             ->whereJsonContains($this->config('field'), $id)
             ->orderBy($this->config('sort') ?? 'title');
-
-        return $query->get();
     }
 }
