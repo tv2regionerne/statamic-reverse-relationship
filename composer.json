@@ -15,5 +15,13 @@
                 "Tv2regionerne\\StatamicReverseRelationship\\ServiceProvider"
             ]
         }
+    },
+    "require": {
+        "statamic/cms": "^4.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
     }
 }
