@@ -2,9 +2,9 @@
 
 namespace Tv2regionerne\StatamicReverseRelationship\Http\Controllers;
 
+use Facades\Statamic\Fields\FieldtypeRepository as Fieldtype;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Facades\Statamic\Fields\FieldtypeRepository as Fieldtype;
 use Statamic\Fields\Field;
 
 class ReverseRelationshipController
