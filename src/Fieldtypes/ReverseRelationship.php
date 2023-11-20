@@ -73,16 +73,19 @@ class ReverseRelationship extends Fieldtype
     {
         $mode = $this->config('mode');
 
+        // ensure the ID does not contain the field prefix
+        $id = str($id)->after('::')->value();
+
         if ($mode === 'entries') {
             $query = Entry::query()->where('collection', $this->config('collection'));
         } else if ($mode === 'terms') {
             $query = Term::query()->where('taxonomy', $this->config('taxonomy'));
         }
 
-        $query 
+        $query
             ->whereJsonContains($this->config('field'), $id)
             ->orderBy($this->config('sort') ?? 'title');
-        
+
         return $query->get();
     }
 }
