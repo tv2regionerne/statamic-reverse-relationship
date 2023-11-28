@@ -16,7 +16,7 @@ This package eliminates the need to create and sync a relationship column in bot
 
 1. Install the addon via Composer:
 ```bash
-composer require vendor/reverse-relationship
+composer require tv2regionerne/statamic-reverse-relationship
 ```
 
 ## Configuration and Usage
