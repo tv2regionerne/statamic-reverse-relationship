@@ -2,7 +2,11 @@
 
 namespace Tv2regionerne\StatamicReverseRelationship\Fieldtypes;
 
+use Statamic\Facades\Asset;
+use Statamic\Facades\AssetContainer;
+use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
+use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
 use Statamic\Fields\Fieldtype;
 
@@ -24,6 +28,7 @@ class ReverseRelationship extends Fieldtype
                         'options' => [
                             'entries' => __('Entries'),
                             'terms' => __('Terms'),
+                            'assets' => __('Assets'),
                         ],
                     ],
                     'collection' => [
@@ -46,6 +51,16 @@ class ReverseRelationship extends Fieldtype
                             'mode' => 'terms',
                         ],
                     ],
+                    'container' => [
+                        'display' => __('Container'),
+                        'instructions' => __('The related container'),
+                        'type' => 'asset_container',
+                        'max_items' => 1,
+                        'validate' => 'required_if:mode,assets',
+                        'if' => [
+                            'mode' => 'assets',
+                        ],
+                    ],
                     'field' => [
                         'display' => __('Field'),
                         'instructions' => __('The related field'),
@@ -59,6 +74,13 @@ class ReverseRelationship extends Fieldtype
                     ],
                 ],
             ],
+        ];
+    }
+
+    public function preload()
+    {
+        return [
+            'id' => $this->field()->parent()->id(),
         ];
     }
 
@@ -96,10 +118,33 @@ class ReverseRelationship extends Fieldtype
             // Remove the taxonomy handle from the ID
             $id = str($id)->after('::')->value();
             $query = Term::query()->where('taxonomy', $this->config('taxonomy'));
+        } elseif ($mode === 'assets') {
+            $query = Asset::query()->where('container', $this->config('container'));
         }
 
+        $field = $this->getField();
+        $key = $field->type() === 'assets' ? 'max_files' : 'max_items';
+        $method = $field->get($key) === 1
+            ? 'whereJsonContains'
+            : 'where';
+
         return $query
-            ->whereJsonContains($this->config('field'), $id)
+            ->{$method}($this->config('field'), $id)
             ->orderBy($this->config('sort') ?? 'title');
+    }
+
+    protected function getField()
+    {
+        $mode = $this->config('mode');
+
+        if ($mode === 'entries') {
+            $blueprint = Collection::findByHandle($this->config('collection'))->entryBlueprint();
+        } elseif ($mode === 'terms') {
+            $blueprint = Taxonomy::findByHandle($this->config('taxonomy'))->termBlueprint();
+        } elseif ($mode === 'assets') {
+            $blueprint = AssetContainer::findByHandle($this->config('container'))->blueprint();
+        }
+
+        return $blueprint->fields()->get($this->config('field'));
     }
 }

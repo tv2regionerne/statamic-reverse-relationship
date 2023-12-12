@@ -15,6 +15,17 @@ class ReverseRelationshipController
 
         $items = $fieldtype->getItems($request->input('id'));
 
+        if ($fieldtype->field()->get('mode') === 'assets') {
+            $items = $items->map(function ($asset) {
+                $data = $asset->toArray();
+                if ($asset->isImage() || $asset->isSvg()) {
+                    $data['thumbnail'] = $asset->thumbnailUrl('small');
+                }
+
+                return $data;
+            });
+        }
+
         return JsonResource::collection($items);
     }
 

@@ -10,12 +10,16 @@
 
         <div v-else class="relationship-input-items space-y-1 outline-none">
             <related-item
+                v-if="config.mode !== 'assets'"
                 v-for="(item, i) in items"
                 :key="item.id"
                 :item="item"
-                :status-icon="true"
-                :read-only="true"
-                class="item outline-none"
+            />
+            <related-asset
+                v-if="config.mode === 'assets'"
+                v-for="(item, i) in items"
+                :key="item.id"
+                :asset="item"
             />
         </div>
 
@@ -25,6 +29,7 @@
 
 <script>
 import RelatedItem from './RelatedItem.vue';
+import RelatedAsset from './RelatedAsset.vue';
 
 export default {
 
@@ -34,6 +39,7 @@ export default {
 
     components: {
         RelatedItem,
+        RelatedAsset,
     },
 
     inject: ['storeName'],
@@ -64,14 +70,14 @@ export default {
     methods: {
        
         request() {
-            if (!this.store.values.id) {
+            if (!this.meta.id) {
                 return;
             }
 
             this.loading = true;
             this.$axios.get(cp_url('reverse-relationship'), {
                 params: {
-                    id: this.store.values.id,
+                    id: this.meta.id,
                     config: this.configParameter,
                 }
             }).then(response => {
