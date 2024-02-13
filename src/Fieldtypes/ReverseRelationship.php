@@ -124,7 +124,7 @@ class ReverseRelationship extends Fieldtype
 
         $field = $this->getField();
         $key = $field->type() === 'assets' ? 'max_files' : 'max_items';
-        $method = $field->get($key) === 1
+        $method = $field->get($key) !== 1
             ? 'whereJsonContains'
             : 'where';
 
