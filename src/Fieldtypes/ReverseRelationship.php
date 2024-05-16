@@ -110,7 +110,7 @@ class ReverseRelationship extends Fieldtype
 
     protected function getQuery($id)
     {
-        $mode = $this->config('mode');
+        $mode = $this->config('mode', 'entries');
 
         if ($mode === 'entries') {
             $query = Entry::query()->where('collection', $this->config('collection'));
@@ -135,7 +135,7 @@ class ReverseRelationship extends Fieldtype
 
     protected function getField()
     {
-        $mode = $this->config('mode');
+        $mode = $this->config('mode', 'entries');
 
         if ($mode === 'entries') {
             $blueprint = Collection::findByHandle($this->config('collection'))->entryBlueprint();
