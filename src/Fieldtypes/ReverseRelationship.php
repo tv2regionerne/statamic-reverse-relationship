@@ -12,7 +12,7 @@ use Statamic\Fields\Fieldtype;
 
 class ReverseRelationship extends Fieldtype
 {
-    protected $icon = 'entries';
+    protected $icon = 'fieldtype-entries';
 
     protected function configFieldItems(): array
     {
